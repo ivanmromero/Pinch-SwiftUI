@@ -14,6 +14,9 @@ struct ContentView: View {
     @State private var imageOffset: CGSize = .zero
     @State private var isDrawerOpen: Bool = false
     
+    let pages: [Page] = pagesData
+    @State private var pageIndex: Int = 1
+    
     // MARK: - FUNCTION
     func resetImageState() {
         withAnimation(.spring) {
@@ -22,13 +25,17 @@ struct ContentView: View {
         }
     }
     
+    func currentPage() -> String {
+        pages[pageIndex - 1].imageName
+    }
+    
     // MARK: - CONTENT
     var body: some View {
         NavigationStack {
             ZStack(content: {
                 Color.clear
                 //MARK: - PAGE IMAGE
-                Image("magazine-front-cover")
+                Image(currentPage())
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                 // Corner radius deprecated in future, replace with 👇🏻
@@ -162,6 +169,20 @@ struct ContentView: View {
                         }
                     
                     //MARK: - THUMBNAILS
+                    ForEach(pages) { page in
+                        Image(page.thumbnailName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 80)
+                            .clipShape(.rect(cornerRadius: 8))
+                            .shadow(radius: 4)
+                            .opacity(isDrawerOpen ? 1 : 0)
+                            .animation(.easeOut(duration: 0.5), value: isDrawerOpen)
+                            .onTapGesture {
+                                isAnimating = true
+                                pageIndex = page.id
+                            }
+                    }
                     Spacer()
                 }
                 .padding(EdgeInsets(top: 16, leading: 8, bottom: 16, trailing: 8))
