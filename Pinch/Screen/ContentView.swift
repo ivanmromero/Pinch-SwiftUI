@@ -61,7 +61,6 @@ struct ContentView: View {
                                 }
                             })
                     )
-                
             })
             .navigationTitle("Pich & Zoom")
             .navigationBarTitleDisplayMode(.inline)
@@ -74,6 +73,51 @@ struct ContentView: View {
                 InfoPanelView(scale: imageScale, offset: imageOffset)
                     .padding(.horizontal)
                     .padding(.top, 30)
+            }
+            .overlay(alignment: .bottom) {
+                Group {
+                    HStack {
+                        // SCALE DOWN
+                        Button(action: {
+                            withAnimation(.spring) {
+                                if imageScale > 1 {
+                                    imageScale -= 1
+                                }
+                                
+                                if imageScale <= 1 {
+                                    resetImageState()
+                                }
+                            }
+                        }, label: {
+                            ControlImageView(iconName: "minus.magnifyingglass")
+                        })
+                        // RESET
+                        Button(action: {
+                            resetImageState()
+                        }, label: {
+                            ControlImageView(iconName: "arrow.up.left.and.down.right.magnifyingglass")
+                        })
+                        // SCALE UP
+                        Button(action: {
+                            withAnimation(.spring) {
+                                if imageScale < 5 {
+                                    imageScale += 1
+                                }
+                                
+                                if imageScale > 5 {
+                                    imageScale = 5
+                                }
+                            }
+                        }, label: {
+                            ControlImageView(iconName: "plus.magnifyingglass")
+                        })
+                    }
+                    .padding(EdgeInsets(top: 12, leading: 20, bottom: 12, trailing: 20))
+                    .background(.ultraThinMaterial)
+                    .clipShape(.rect(cornerRadius: 12))
+                    .opacity(isAnimating ? 1 : 0)
+                }
+                .padding(.bottom, 30)
             }
         }
     }
